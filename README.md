@@ -4,37 +4,32 @@
 
 ## 📖 Project Context
 
-**Libzork** is a C++ development project. The goal is to build a modular engine capable of parsing and executing "Choose Your Own Adventure" stories (inspired by the classic text-based game *Zork*). The engine reads story files, builds a graph representation in memory, and executes it through a Command Line Interface (CLI).
+**Libzork** is a C++ development project. The goal is to build a modular engine capable of parsing and executing "Choose Your Own Adventure" stories (inspired by the classic text-based game *Zork*). The engine builds a directed graph representation of the story in memory and executes it through a Command Line Interface (CLI).
 
 ## 🏗️ Architectural Overview
 
-The core architecture heavily relies on Modern C++ idioms (smart pointers, move semantics) and strong Object-Oriented principles. The logic is cleanly separated into three main components:
+The core architecture heavily relies on Modern C++ idioms (smart pointers, move semantics) and strong Object-Oriented principles. The logic is cleanly separated into data representation and execution contexts:
 
 ### 1. Graph-Based Story Engine (`Story`, `Node`, `Choice`)
 The narrative is represented as a directed graph:
 * **Nodes** represent the different scenes or rooms.
 * **Choices** represent the directed edges linking the nodes.
-The graph is safely managed in memory using `std::unique_ptr` and `std::shared_ptr`. This prevents memory leaks during complex cyclic story paths while clearly defining ownership.
 
-### 2. State & Variable Management (`Store`)
-The engine supports dynamic gameplay through a central `Store` component. 
-* It uses standard C++ containers (like `std::map<std::string, int>`) to track the player's inventory and triggered flags across the story.
-* This allows the game to maintain a persistent state, tracking if a player has acquired a specific item before allowing them to unlock a specific node.
+The graph is safely managed in memory using standard C++ smart pointers (`std::unique_ptr` and `std::shared_ptr`). This ensures strict ownership rules and prevents memory leaks during complex cyclic story paths (e.g., going back and forth between two rooms).
 
-### 3. Interactive Execution (`InteractiveRunner`)
-The execution logic is entirely decoupled from the story data. The `InteractiveRunner` is responsible for parsing user inputs via standard input streams (`std::istream`), displaying the current node's description to the standard output (`std::ostream`), and traversing the graph based on the selected valid choices.
+### 2. Interactive Execution (`InteractiveRunner`)
+The execution logic is decoupled from the story data. The `InteractiveRunner` parses user inputs via standard input streams (`std::istream`), displays the current node's description to the standard output (`std::ostream`), and traverses the graph based on the user's valid choices.
 
 ## 🚀 Technical Highlights
 
 ### Safe Memory Management & Factory Patterns
-The project strictly prohibits raw `new`/`delete`. Object creation is encapsulated within factory functions returning unique pointers, ensuring exception safety and clean boundaries:
+The project strictly prohibits raw `new`/`delete` calls. Object creation is encapsulated within factory functions returning unique pointers, ensuring exception safety and clean boundaries:
 
 ```cpp
-// Example of the Factory pattern used to instantiate the active store
-namespace libzork::store {
-    std::unique_ptr<Store> make_store() {
-        return std::make_unique<StoreImpl>();
-    }
+// Example of the Factory pattern used to instantiate the CLI runner
+namespace libzork::runner {
+    InteractiveRunner::InteractiveRunner(std::unique_ptr<story::Story> story, std::istream& is, std::ostream& os)
+        : Runner(std::move(story)), is_(is), os_(os) {}
 }
 ```
 
@@ -43,11 +38,21 @@ By decoupling the `Story` (data structure) from the `Runner` (execution context)
 
 ## 🎯 Demonstration
 
-The engine is compiled into a standalone binary `zorkxplorer` using CMake.
+A pre-compiled version of the engine and a sample story are available for testing.
 
-### Playing a story (Interactive Mode)
+1. Go to the **[Releases](../../releases)** section and download the `libzork_demo.tar.gz` archive.
+2. Extract the archive:
 ```bash
-./zorkxplorer --story path/to/story.yml
+tar -xvf libzork_demo.tar.gz
+```
+
+3. **Play the demo story (Interactive Mode):**
+```bash
+./zorkxplorer --story demo/story.yml
 ```
 
 *Expected behavior: The terminal prints the room description and waits for the user to type the number corresponding to their choice, navigating through the graph until an end node is reached.*
+
+<p align="center">
+  <img src="img/demo.gif" alt="Terminal execution demonstration" width="800">
+</p>
