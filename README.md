@@ -41,7 +41,7 @@ By decoupling the `Story` (data structure) from the `Runner` (execution context)
 A pre-compiled version of the engine and a sample story are available for testing.
 
 1. Go to the **[Releases](../../releases)** section and download the `libzork_demo.tar.gz` archive.
-2. Extract the archive and go to the `demo/` directory:
+2. Extract the archive and go into the `demo/` directory:
 ```bash
 tar -xvf libzork_demo.tar.gz
 cd demo
