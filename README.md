@@ -41,14 +41,15 @@ By decoupling the `Story` (data structure) from the `Runner` (execution context)
 A pre-compiled version of the engine and a sample story are available for testing.
 
 1. Go to the **[Releases](../../releases)** section and download the `libzork_demo.tar.gz` archive.
-2. Extract the archive:
+2. Extract the archive and go to the `demo/` directory:
 ```bash
 tar -xvf libzork_demo.tar.gz
+cd demo
 ```
 
 3. **Play the demo story (Interactive Mode):**
 ```bash
-./zorkxplorer --story demo/story.yml
+./zorkxplorer --story story.yml
 ```
 
 *Expected behavior: The terminal prints the room description and waits for the user to type the number corresponding to their choice, navigating through the graph until an end node is reached.*
