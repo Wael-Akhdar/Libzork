@@ -36,6 +36,10 @@ namespace libzork::runner {
 ### Decoupled Logic
 By decoupling the `Story` (data structure) from the `Runner` (execution context), the engine is highly extensible. Adding a new interface (like a GUI or a Web output) simply requires implementing a new runner class without altering a single line of the core graph logic.
 
+## 🛠️ Skills
+
+`C++` · `REST APIs` · `YAML`
+
 ## 🎯 Demonstration
 
 A pre-compiled version of the engine and a sample story are available for testing.
